@@ -21,8 +21,14 @@ export default {
     try {
       const appLoadContext = await createAppLoadContext(
         request,
-        env,
-        executionContext,
+        {
+          ...env,
+          customerAccount: {
+            clientId: env.PUBLIC_CUSTOMER_ACCOUNT_API_CLIENT_ID,
+            redirectUri: `${env.PUBLIC_STORE_DOMAIN}/account/authorize`,
+          },
+        },
+        executionContext
       );
 
       /**

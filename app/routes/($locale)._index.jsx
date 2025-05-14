@@ -79,56 +79,64 @@ function FeaturedCollection({collection}) {
   const image = collection?.image;
   return (
     <Link
-      className="featured-collection"
+      className="featured-collection group relative block h-96 w-full overflow-hidden rounded-xl shadow-xl"
       to={`/collections/${collection.handle}`}
     >
       {image && (
-        <div className="featured-collection-image">
-          <Image data={image} sizes="100vw" />
+        <div className="h-full w-full transition-transform duration-500 group-hover:scale-105">
+          <Image
+            data={image}
+            className="h-full w-full object-cover"
+            sizes="(min-width: 1280px) 1280px, 100vw"
+          />
         </div>
       )}
-      <h1>{collection.title}</h1>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/30">
+        <h2 className="absolute bottom-8 left-8 text-5xl font-bold text-white drop-shadow-2xl">
+          {collection.title}
+        </h2>
+      </div>
     </Link>
   );
 }
 
-/**
- * @param {{
- *   products: Promise<RecommendedProductsQuery | null>;
- * }}
- */
 function RecommendedProducts({products}) {
   return (
-    <div className="recommended-products">
-      <h2>Recommended Products</h2>
-      <Suspense fallback={<div>Loading...</div>}>
+    <div className="recommended-products mx-auto max-w-7xl px-4 py-16">
+      <h2 className="mb-12 text-center text-4xl font-bold tracking-wide text-gray-900">
+        Trending Now
+      </h2>
+      <Suspense fallback={<div className="text-center">Loading recommendations...</div>}>
         <Await resolve={products}>
           {(response) => (
-            <div className="recommended-products-grid">
-              {response
-                ? response.products.nodes.map((product) => (
-                    <Link
-                      key={product.id}
-                      className="recommended-product"
-                      to={`/products/${product.handle}`}
-                    >
-                      <Image
-                        data={product.images.nodes[0]}
-                        aspectRatio="1/1"
-                        sizes="(min-width: 45em) 20vw, 50vw"
-                      />
-                      <h4>{product.title}</h4>
-                      <small>
-                        <Money data={product.priceRange.minVariantPrice} />
-                      </small>
-                    </Link>
-                  ))
-                : null}
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-8">
+              {response?.products.nodes.map((product) => (
+                <Link
+                  key={product.id}
+                  className="recommended-product group relative overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg"
+                  to={`/products/${product.handle}`}
+                >
+                  <div className="aspect-square overflow-hidden">
+                    <Image
+                      data={product.images.nodes[0]}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(min-width: 45em) 20vw, 50vw"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <h4 className="mb-2 text-lg font-medium text-gray-900 line-clamp-2">
+                      {product.title}
+                    </h4>
+                    <small className="bg-gradient-to-r from-amber-500 to-pink-500 bg-clip-text text-sm font-bold text-transparent">
+                      <Money data={product.priceRange.minVariantPrice} />
+                    </small>
+                  </div>
+                </Link>
+              ))}
             </div>
           )}
         </Await>
       </Suspense>
-      <br />
     </div>
   );
 }

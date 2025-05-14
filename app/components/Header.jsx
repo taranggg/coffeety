@@ -1,5 +1,5 @@
 import {Suspense} from 'react';
-import {Await, NavLink, useAsyncValue} from '@remix-run/react';
+import {Await, Link, NavLink, useAsyncValue} from '@remix-run/react';
 import {useAnalytics, useOptimisticCart} from '@shopify/hydrogen';
 import {useAside} from '~/components/Aside';
 
@@ -89,10 +89,10 @@ function HeaderCtas({isLoggedIn, cart}) {
   return (
     <nav className="header-ctas" role="navigation">
       <HeaderMenuMobileToggle />
-      <NavLink prefetch="intent" to="/account" style={activeLinkStyle}>
+      <NavLink prefetch="intent" to="/account/login" style={activeLinkStyle}>
         <Suspense fallback="Sign in">
           <Await resolve={isLoggedIn} errorElement="Sign in">
-            {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in')}
+            {(isLoggedIn) => (isLoggedIn ? 'Account' : 'Sign in 456')}
           </Await>
         </Suspense>
       </NavLink>
@@ -235,3 +235,12 @@ function activeLinkStyle({isActive, isPending}) {
 /** @typedef {import('@shopify/hydrogen').CartViewPayload} CartViewPayload */
 /** @typedef {import('storefrontapi.generated').HeaderQuery} HeaderQuery */
 /** @typedef {import('storefrontapi.generated').CartApiQueryFragment} CartApiQueryFragment */
+
+<div className="flex items-center space-x-4">
+  <Link
+    to="/login"
+    className="bg-gradient-to-r from-amber-600 to-amber-400 text-white px-6 py-2 rounded-full font-medium hover:from-amber-700 hover:to-amber-500 transition-all shadow-sm hover:shadow-md"
+  >
+    Sign In
+  </Link>
+</div>;
