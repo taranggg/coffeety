@@ -31,5 +31,40 @@ export function Login() {
 }
 
 async function authenticate(code) {
-  // Authentication handled via Shopify Hydrogen's built-in customer account API
+  try {
+    const {customerAccount} = window.ENV;
+    const {data, errors} = await customerAccount.mutate(
+      `mutation customerAccessTokenCreate($code: String!) {
+        customerAccessTokenCreate(input: {code: $code}) {
+          customerAccessToken {
+            accessToken
+            expiresAt
+          }
+          customerUserErrors {
+            code
+            message
+          }
+        }
+      }`,
+      {
+        variables: {code},
+      },
+    );
+
+    if (errors?.length) throw new Error(errors[0].message);
+
+    const token =
+      data?.customerAccessTokenCreate?.customerAccessToken?.accessToken;
+    if (token) {
+      await fetch('/account/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({token}),
+      });
+    }
+  } catch (error) {
+    console.error('Authentication failed:', error);
+  }
 }
